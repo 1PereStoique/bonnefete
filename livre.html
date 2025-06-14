@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Raconte moi d'où je viens</title>
+  <style>
+    body {
+      margin: 0;
+      background: url('assets/pupitre.jpg') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+    }
+    #cover {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: url('assets/bleu_texture.jpg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: gold;
+      text-shadow: 1px 1px 2px black;
+      cursor: pointer;
+      text-align: center;
+    }
+    #cover h1 {
+      font-size: 2em;
+      margin: 0;
+    }
+    #cover p {
+      font-size: 1em;
+      margin-top: 10px;
+      max-width: 80%;
+    }
+    #flipbook-container {
+      display: none;
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="cover" onclick="openBook()">
+    <h1>Raconte moi d'où je viens</h1>
+    <p>Le savoir s’acquiert par l’étude, la sagesse par l’observation.</p>
+  </div>
+  <div id="flipbook-container">
+    <div id="flipbook" class="page-flip"></div>
+  </div>
+
+  <script src="https://unpkg.com/page-flip/dist/page-flip.browser.min.js"></script>
+  <script>
+    function openBook() {
+      document.getElementById('cover').style.display = 'none';
+      document.getElementById('flipbook-container').style.display = 'block';
+
+      const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+        width: 500,
+        height: 400,
+        size: "stretch",
+        maxShadowOpacity: 0.5,
+        showCover: true,
+        mobileScrollSupport: false
+      });
+
+      let pages = "";
+      for (let i = 0; i < 11; i++) {
+        const content = localStorage.getItem('page_' + i) || "";
+        pages += `
+          <div class='page'>
+            <textarea onchange="localStorage.setItem('page_${i}', this.value)"
+                      style='width:100%; height:100%; font-size:16px;'>${content}</textarea>
+          </div>`;
+      }
+
+      document.getElementById("flipbook").innerHTML = pages;
+      pageFlip.loadFromHTML(document.querySelectorAll(".page"));
+    }
+  </script>
+</body>
+</html>
