@@ -46,38 +46,31 @@
       color: #2e2e2e;
     }
 
-    .fermer, .sauver {
-      position: absolute;
-      top: 5px;
+    .fermer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
       font-size: 20px;
       font-weight: bold;
+      color: #000;
       background: rgba(255, 255, 255, 0.7);
       padding: 4px 10px;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 15;
+      z-index: 20;
+      display: none;
     }
 
-    .fermer {
-      left: 8px;
-      color: #000;
-    }
-
-    .sauver {
-      right: 8px;
-      color: #006400;
-    }
-
-    .fermer:hover, .sauver:hover {
+    .fermer:hover {
       background: rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
 <body>
 
+<div class="fermer" id="fermer">✕</div>
+
 <div class="feuille" id="feuille">
-  <div class="fermer" id="fermer">✕</div>
-  <div class="sauver" id="sauver">💾</div>
   <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
 </div>
 
@@ -85,22 +78,23 @@
   const feuille = document.getElementById('feuille');
   const zoneTexte = document.getElementById('zoneTexte');
   const fermer = document.getElementById('fermer');
-  const sauver = document.getElementById('sauver');
   let feuilleVisible = false;
 
-  // Affichage de la feuille au clic
+  // Afficher la feuille au clic
   document.body.addEventListener('click', () => {
     if (!feuilleVisible) {
       feuille.style.display = 'block';
+      fermer.style.display = 'block';
       feuilleVisible = true;
       zoneTexte.focus();
     }
   });
 
-  // Fermer avec la croix
+  // Fermer la feuille avec la croix
   fermer.addEventListener('click', (e) => {
     e.stopPropagation();
     feuille.style.display = 'none';
+    fermer.style.display = 'none';
     feuilleVisible = false;
   });
 
@@ -108,36 +102,22 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && feuilleVisible) {
       feuille.style.display = 'none';
+      fermer.style.display = 'none';
       feuilleVisible = false;
     }
   });
 
-  // Sauvegarde locale
+  // Sauvegarde automatique
   zoneTexte.addEventListener('input', () => {
     localStorage.setItem('texteFeuille', zoneTexte.value);
   });
 
-  // Restauration du texte
+  // Récupération du texte
   window.addEventListener('load', () => {
     const contenu = localStorage.getItem('texteFeuille');
     if (contenu) {
       zoneTexte.value = contenu;
     }
-  });
-
-  // Exporter vers un fichier texte
-  sauver.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const texte = zoneTexte.value;
-    const blob = new Blob([texte], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const lien = document.createElement('a');
-    lien.href = url;
-    lien.download = 'memoire.txt';
-    document.body.appendChild(lien);
-    lien.click();
-    document.body.removeChild(lien);
-    URL.revokeObjectURL(url);
   });
 </script>
 
