@@ -4,7 +4,7 @@
 <head>
   <link rel="icon" type="image/png" href="favicon.png">
   <meta charset="UTF-8">
-  <title>Gardiens des Siens</title>
+  <title>Racines</title>
   <style>
     html, body {
       height: 100%;
@@ -32,12 +32,6 @@
       font-size: 20px;
       line-height: 1.5;
     }
-    .question {
-      font-style: italic;
-      margin-top: 20px;
-      font-size: 18px;
-      color: #ddd;
-    }
     input[type="password"] {
       padding: 12px;
       font-size: 18px;
@@ -48,7 +42,7 @@
     }
     button {
       padding: 12px 25px;
-      font-size: 18px;
+      font-size: 20px;
       margin-top: 15px;
       border: none;
       border-radius: 8px;
@@ -79,8 +73,7 @@
       <p>Dans l’entraide je prends sens,</p>
       <p>Je fais d’un “je” un “nous”.</p>
     </div>
-    <p class="question">Qui suis-je ?</p>
-    <input type="password" id="password" placeholder="Mot de passe" />
+    <input type="password" id="password" placeholder="Qui suis-je ?" />
     <br />
     <button onclick="checkPassword()">Entrer</button>
     <div class="error" id="errorMsg"></div>
@@ -89,10 +82,13 @@
   <script>
     const messages = [
       "Tu t’es trompé, Yves.",
-      "Essaie encore, mais cette fois sans les moufles.",
-      "C’est pas ça, Sherlock.",
       "Tu confonds.",
-      "On dirait que t’as tapé avec les coudes.",
+      "... fait la force.",
+      "Là tu le fais exprès.",
+      "T'as essayé 1234 ?",
+      "Un fantastique boulet de ca...",
+      "Sinon t'es fier de tes mains ?",
+      "Indice : c'est pas la bonne réponse.",
     ];
 
     function checkPassword() {
