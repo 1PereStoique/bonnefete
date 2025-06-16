@@ -92,19 +92,22 @@
       "Sinon t'es fier de tes mains ?",
       "Indice : c'est pas la bonne réponse.",
     ];
-
-    function checkPassword() {
-      var pass = document.getElementById('password').value;
-      var error = document.getElementById('errorMsg');
-
-      if (pass === 'union') {
-        window.location.href = 'livre.html';
-      } else {
-        const random = Math.floor(Math.random() * messages.length);
-        error.innerText = messages[random];
-        error.style.display = 'block';
-      }
-    }
+function checkPassword() {
+  var pass = document.getElementById('password').value.trim();
+  var error = document.getElementById('errorMsg');
+  if (pass === '') {
+    error.innerText = '';
+    error.style.display = 'none';
+    return;
+  }
+  if (pass === 'union') {
+    window.location.href = 'livre.html';
+  } else {
+    const random = Math.floor(Math.random() * messages.length);
+    error.innerText = messages[random];
+    error.style.display = 'block';
+  }
+}
   </script>
 </body>
 </html>
