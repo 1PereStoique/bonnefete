@@ -33,19 +33,7 @@
       margin: 10px 0;
       font-size: 25px;
       line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .letter {
-      opacity: 0;
-      display: inline-block;
-      animation: fadeIn 0.3s forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+      opacity: 1;
     }
 
     input[type="text"] {
@@ -84,13 +72,13 @@
 <body>
   <div class="box">
     <div class="devinette">
-      <p data-text="Je suis le lien invisible,"></p>
-      <p data-text="Qui unit sans chaînes,"></p>
-      <p data-text="Je suis plus fort que le sang,"></p>
-      <p data-text="Car je rassemble même les cœurs lointains."></p>
-      <p data-text="Dans la différence je trouve ma force,"></p>
-      <p data-text="Dans l’entraide je prends sens,"></p>
-      <p data-text="Je fais d’un “je” un “nous”."></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
     </div>
 
     <form onsubmit="checkPassword(); return false;">
@@ -118,13 +106,13 @@
       const error = document.getElementById('errorMsg');
       const pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
 
-      const validPasswords = ['union', "l'union", 'lunion'];
-
       if (pass === '') {
         error.innerText = '';
         error.style.display = 'none';
         return;
       }
+
+      const validPasswords = ['union', "l'union", 'lunion'];
 
       if (validPasswords.includes(pass)) {
         window.location.href = 'livre.html';
@@ -139,28 +127,34 @@
 
     function showRiddle() {
       const lines = document.querySelectorAll('.devinette p');
+      const texts = [
+        "Je suis le lien invisible,",
+        "Qui unit sans chaînes,",
+        "Je suis plus fort que le sang,",
+        "Car je rassemble même les cœurs lointains.",
+        "Dans la différence je trouve ma force,",
+        "Dans l’entraide je prends sens,",
+        "Je fais d’un “je” un “nous”."
+      ];
 
-      lines.forEach(line => line.innerHTML = '');
+      lines.forEach(line => line.innerText = '');
 
       let currentLine = 0;
 
       function typeLine() {
-        if (currentLine >= lines.length) return;
+        if (currentLine >= texts.length) return;
 
-        const text = lines[currentLine].dataset.text;
         let charIndex = 0;
+        const currentText = texts[currentLine];
 
         function typeChar() {
-          if (charIndex < text.length) {
-            const span = document.createElement('span');
-            span.className = 'letter';
-            span.textContent = text[charIndex];
-            lines[currentLine].appendChild(span);
+          if (charIndex < currentText.length) {
+            lines[currentLine].innerText += currentText[charIndex];
             charIndex++;
-            setTimeout(typeChar, 30);
+            setTimeout(typeChar, 30); // vitesse de frappe (lettre)
           } else {
             currentLine++;
-            setTimeout(typeLine, 300);
+            setTimeout(typeLine, 300); // délai entre chaque ligne
           }
         }
 
@@ -181,7 +175,7 @@
       showRiddle();
     });
 
-    showRiddle();
+    showRiddle(); // lancement initial
   </script>
 </body>
 </html>
