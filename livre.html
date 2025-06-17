@@ -56,6 +56,22 @@
       transform: scale(0.95);
     }
 
+    #valider {
+      margin-top: 15px;
+      padding: 6px 14px;
+      font-size: 16px;
+      background-color: #c9a86a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    #valider:hover {
+      background-color: #b58c47;
+    }
+
     .feuille {
       position: absolute;
       top: 50%;
@@ -63,7 +79,7 @@
       transform: translate(-50%, -50%);
       width: 60%;
       height: 70%;
-      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...'); /* image fond ici */
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAA...'); /* Remplace par image parchemin si besoin */
       background-size: cover;
       border-radius: 8px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
@@ -84,26 +100,16 @@
       color: #2e2e2e;
     }
 
-    .message {
+    #fermer {
       position: absolute;
-      bottom: 40px;
-      right: 40px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #333;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 18px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      z-index: 5;
-      max-width: 300px;
-      text-align: center;
+      top: 10px;
+      left: 10px;
+      width: 32px;
+      height: 32px;
+      background: url('fermer-cadenas.png') no-repeat center center;
+      background-size: contain;
       cursor: pointer;
-      transition: opacity 0.3s ease;
-    }
-
-    .message.hidden {
-      opacity: 0;
-      pointer-events: none;
+      z-index: 30;
     }
 
     .fade-out {
@@ -129,26 +135,27 @@
 <body>
 
 <div id="lockContainer">
-  <img id="lockImage" src="cadenas.png" alt="Cadenas">
+  <img id="lockImage" src="cadenas.PNG" alt="Cadenas">
   <div class="code" id="codeContainer">
     <div class="digit">0</div>
     <div class="digit">0</div>
     <div class="digit">0</div>
     <div class="digit">0</div>
   </div>
+  <button id="valider">Valider</button>
 </div>
 
 <div class="feuille" id="feuille">
+  <div id="fermer"></div>
   <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
 </div>
-
-<div class="message" id="message">Clique pour écrire.</div>
 
 <script>
   const digits = document.querySelectorAll('.digit');
   const lockContainer = document.getElementById('lockContainer');
   const feuille = document.getElementById('feuille');
-  const message = document.getElementById('message');
+  const valider = document.getElementById('valider');
+  const fermer = document.getElementById('fermer');
   const correctCode = ['0', '0', '0', '0'];
 
   digits.forEach((digit, index) => {
@@ -156,31 +163,18 @@
       let val = parseInt(digit.textContent);
       val = (val + 1) % 10;
       digit.textContent = val;
-      checkCode();
     });
   });
 
-  function checkCode() {
+  valider.addEventListener('click', () => {
     const input = Array.from(digits).map(d => d.textContent);
     if (JSON.stringify(input) === JSON.stringify(correctCode)) {
       lockContainer.classList.add('fade-out');
       setTimeout(() => {
         lockContainer.style.display = 'none';
         feuille.style.display = 'block';
-        message.classList.add('hidden');
       }, 1000);
-    }
-  }
-
-  function resetCode() {
-    digits.forEach(d => d.textContent = '0');
-  }
-
-  // Mauvais code → simuler tirage vers le haut
-  let tryCount = 0;
-  document.getElementById('codeContainer').addEventListener('dblclick', () => {
-    const input = Array.from(digits).map(d => d.textContent);
-    if (JSON.stringify(input) !== JSON.stringify(correctCode)) {
+    } else {
       lockContainer.classList.add('shake');
       setTimeout(() => {
         lockContainer.classList.remove('shake');
@@ -189,7 +183,15 @@
     }
   });
 
-  // Récupération sauvegarde
+  function resetCode() {
+    digits.forEach(d => d.textContent = '0');
+  }
+
+  fermer.addEventListener('click', () => {
+    feuille.style.display = 'none';
+    lockContainer.style.display = 'block';
+  });
+
   const zoneTexte = document.getElementById('zoneTexte');
   zoneTexte.addEventListener('input', () => {
     localStorage.setItem('texteFeuille', zoneTexte.value);
