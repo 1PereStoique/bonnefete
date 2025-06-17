@@ -112,6 +112,15 @@ if (validPasswords.includes(pass)) {
     input.focus();
   }
 }
+window.addEventListener('pageshow', function () {
+  const input = document.getElementById('password');
+  const error = document.getElementById('errorMsg');
+  if (input) input.value = '';
+  if (error) {
+    error.innerText = '';
+    error.style.display = 'none';
+  }
+});
   </script>
 </body>
 </html>
