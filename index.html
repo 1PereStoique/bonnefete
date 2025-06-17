@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Racines</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
   <style>
     html, body {
       height: 100%;
@@ -12,9 +12,7 @@
     }
 
     body {
-      background-image: url('1.jpeg');
-      background-size: cover;
-      background-position: center;
+      background: url('1.jpeg') center/cover no-repeat;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,11 +27,27 @@
       max-width: 800px;
     }
 
+    .devinette {
+      margin-bottom: 30px;
+    }
+
     .devinette p {
-      margin: 10px 0;
       font-size: 25px;
+      margin: 10px 0;
       line-height: 1.5;
-      opacity: 1;
+      white-space: pre-wrap;
+    }
+
+    .letter {
+      opacity: 0;
+      display: inline-block;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
     input[type="text"] {
@@ -71,15 +85,7 @@
 </head>
 <body>
   <div class="box">
-    <div class="devinette">
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-    </div>
+    <div class="devinette" id="devinette"></div>
 
     <form onsubmit="checkPassword(); return false;">
       <input type="text" id="password" placeholder="Qui suis-je ?" />
@@ -90,6 +96,16 @@
   </div>
 
   <script>
+    const riddleLines = [
+      "Je suis le lien invisible,",
+      "Qui unit sans chaînes,",
+      "Je suis plus fort que le sang,",
+      "Car je rassemble même les cœurs lointains.",
+      "Dans la différence je trouve ma force,",
+      "Dans l’entraide je prends sens,",
+      "Je fais d’un “je” un “nous”."
+    ];
+
     const messages = [
       "Tu t’es trompé, Yves.",
       "Tu confonds.",
@@ -101,18 +117,60 @@
       "Indice : c'est pas la bonne réponse."
     ];
 
+    let isTyping = false;
+
+    function showRiddle() {
+      if (isTyping) return;
+      isTyping = true;
+
+      const container = document.getElementById('devinette');
+      container.innerHTML = ''; // on vide proprement
+
+      let lineIndex = 0;
+
+      function typeLine() {
+        if (lineIndex >= riddleLines.length) {
+          isTyping = false;
+          return;
+        }
+
+        const p = document.createElement('p');
+        container.appendChild(p);
+        const line = riddleLines[lineIndex];
+        let charIndex = 0;
+
+        function typeChar() {
+          if (charIndex < line.length) {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = line[charIndex];
+            p.appendChild(span);
+            charIndex++;
+            setTimeout(typeChar, 30); // vitesse par lettre
+          } else {
+            lineIndex++;
+            setTimeout(typeLine, 300); // délai entre lignes
+          }
+        }
+
+        typeChar();
+      }
+
+      typeLine();
+    }
+
     function checkPassword() {
       const input = document.getElementById('password');
       const error = document.getElementById('errorMsg');
       const pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
+
+      const validPasswords = ['union', "l'union", 'lunion'];
 
       if (pass === '') {
         error.innerText = '';
         error.style.display = 'none';
         return;
       }
-
-      const validPasswords = ['union', "l'union", 'lunion'];
 
       if (validPasswords.includes(pass)) {
         window.location.href = 'livre.html';
@@ -125,53 +183,11 @@
       }
     }
 
-    function showRiddle() {
-      const lines = document.querySelectorAll('.devinette p');
-      const texts = [
-        "Je suis le lien invisible,",
-        "Qui unit sans chaînes,",
-        "Je suis plus fort que le sang,",
-        "Car je rassemble même les cœurs lointains.",
-        "Dans la différence je trouve ma force,",
-        "Dans l’entraide je prends sens,",
-        "Je fais d’un “je” un “nous”."
-      ];
-
-      lines.forEach(line => line.innerText = '');
-
-      let currentLine = 0;
-
-      function typeLine() {
-        if (currentLine >= texts.length) return;
-
-        let charIndex = 0;
-        const currentText = texts[currentLine];
-
-        function typeChar() {
-          if (charIndex < currentText.length) {
-            lines[currentLine].innerText += currentText[charIndex];
-            charIndex++;
-            setTimeout(typeChar, 30); // vitesse de frappe (lettre)
-          } else {
-            currentLine++;
-            setTimeout(typeLine, 300); // délai entre chaque ligne
-          }
-        }
-
-        typeChar();
-      }
-
-      typeLine();
-    }
-
-    window.addEventListener('pageshow', function () {
-      const input = document.getElementById('password');
+    window.addEventListener('pageshow', () => {
+      document.getElementById('password').value = '';
       const error = document.getElementById('errorMsg');
-      if (input) input.value = '';
-      if (error) {
-        error.innerText = '';
-        error.style.display = 'none';
-      }
+      error.innerText = '';
+      error.style.display = 'none';
       showRiddle();
     });
 
