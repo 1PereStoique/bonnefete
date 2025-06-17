@@ -17,8 +17,43 @@
       background-size: cover;
     }
 
-    * {
-      box-sizing: border-box;
+    #lockContainer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+    }
+
+    #lockImage {
+      width: 300px;
+      transition: transform 0.3s ease;
+    }
+
+    .code {
+      display: flex;
+      justify-content: center;
+      margin-top: -60px;
+      gap: 10px;
+    }
+
+    .digit {
+      width: 40px;
+      height: 60px;
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 60px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .digit:active {
+      transform: scale(0.95);
     }
 
     .feuille {
@@ -28,15 +63,13 @@
       transform: translate(-50%, -50%);
       width: 60%;
       height: 70%;
-      background: #fdf6e3;
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...'); /* image fond ici */
+      background-size: cover;
       border-radius: 8px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-      background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 70%), 
-                        url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-      background-blend-mode: multiply;
       padding: 5mm;
       display: none;
-      z-index: 10;
+      z-index: 20;
     }
 
     textarea {
@@ -49,25 +82,6 @@
       line-height: 1.6;
       outline: none;
       color: #2e2e2e;
-    }
-
-    .fermer {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #000;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 4px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 20;
-      display: none;
-    }
-
-    .fermer:hover {
-      background: rgba(0, 0, 0, 0.1);
     }
 
     .message {
@@ -87,92 +101,107 @@
       transition: opacity 0.3s ease;
     }
 
-    .message:hover {
-      background: rgba(255, 255, 255, 0.9);
-    }
-
     .message.hidden {
       opacity: 0;
       pointer-events: none;
     }
 
-    @media screen and (max-width: 600px) {
-      .message {
-        bottom: 20px;
-        right: 20px;
-        font-size: 16px;
-        padding: 10px 14px;
-      }
+    .fade-out {
+      animation: fadeOut 1s forwards;
+    }
 
-      .feuille {
-        width: 90%;
-        height: 70%;
-      }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: scale(1.2); }
+    }
+
+    .shake {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      25% { transform: translate(-50%, -50%) translateY(-20px); }
+      50% { transform: translate(-50%, -50%) translateY(5px); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
     }
   </style>
 </head>
 <body>
 
-  <div class="fermer" id="fermer">✕</div>
-
-  <div class="feuille" id="feuille">
-    <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
+<div id="lockContainer">
+  <img id="lockImage" src="cadenas.png" alt="Cadenas">
+  <div class="code" id="codeContainer">
+    <div class="digit">0</div>
+    <div class="digit">0</div>
+    <div class="digit">0</div>
+    <div class="digit">0</div>
   </div>
+</div>
 
-  <div class="message" id="message">Clique pour écrire.</div>
+<div class="feuille" id="feuille">
+  <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
+</div>
 
-  <script>
-    const feuille = document.getElementById('feuille');
-    const zoneTexte = document.getElementById('zoneTexte');
-    const fermer = document.getElementById('fermer');
-    const message = document.getElementById('message');
-    let feuilleVisible = false;
+<div class="message" id="message">Clique pour écrire.</div>
 
-    // Afficher la feuille au clic
-    document.body.addEventListener('click', (e) => {
-      const isFeuilleOuverte = feuilleVisible;
-      const isClicSurTexte = e.target.closest('#zoneTexte') || e.target.closest('#fermer');
-      if (!isFeuilleOuverte && !isClicSurTexte) {
+<script>
+  const digits = document.querySelectorAll('.digit');
+  const lockContainer = document.getElementById('lockContainer');
+  const feuille = document.getElementById('feuille');
+  const message = document.getElementById('message');
+  const correctCode = ['0', '0', '0', '0'];
+
+  digits.forEach((digit, index) => {
+    digit.addEventListener('click', () => {
+      let val = parseInt(digit.textContent);
+      val = (val + 1) % 10;
+      digit.textContent = val;
+      checkCode();
+    });
+  });
+
+  function checkCode() {
+    const input = Array.from(digits).map(d => d.textContent);
+    if (JSON.stringify(input) === JSON.stringify(correctCode)) {
+      lockContainer.classList.add('fade-out');
+      setTimeout(() => {
+        lockContainer.style.display = 'none';
         feuille.style.display = 'block';
-        fermer.style.display = 'block';
-        feuilleVisible = true;
-        zoneTexte.focus();
         message.classList.add('hidden');
-      }
-    });
+      }, 1000);
+    }
+  }
 
-    // Fermer la feuille avec la croix
-    fermer.addEventListener('click', (e) => {
-      e.stopPropagation();
-      feuille.style.display = 'none';
-      fermer.style.display = 'none';
-      feuilleVisible = false;
-      message.classList.remove('hidden'); // Réafficher le message
-    });
+  function resetCode() {
+    digits.forEach(d => d.textContent = '0');
+  }
 
-    // Fermer avec la touche Échap
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && feuilleVisible) {
-        feuille.style.display = 'none';
-        fermer.style.display = 'none';
-        feuilleVisible = false;
-        message.classList.remove('hidden'); // Réafficher le message
-      }
-    });
+  // Mauvais code → simuler tirage vers le haut
+  let tryCount = 0;
+  document.getElementById('codeContainer').addEventListener('dblclick', () => {
+    const input = Array.from(digits).map(d => d.textContent);
+    if (JSON.stringify(input) !== JSON.stringify(correctCode)) {
+      lockContainer.classList.add('shake');
+      setTimeout(() => {
+        lockContainer.classList.remove('shake');
+        resetCode();
+      }, 500);
+    }
+  });
 
-    // Sauvegarde automatique
-    zoneTexte.addEventListener('input', () => {
-      localStorage.setItem('texteFeuille', zoneTexte.value);
-    });
+  // Récupération sauvegarde
+  const zoneTexte = document.getElementById('zoneTexte');
+  zoneTexte.addEventListener('input', () => {
+    localStorage.setItem('texteFeuille', zoneTexte.value);
+  });
 
-    // Récupération du texte
-    window.addEventListener('load', () => {
-      const contenu = localStorage.getItem('texteFeuille');
-      if (contenu) {
-        zoneTexte.value = contenu;
-      }
-    });
-  </script>
+  window.addEventListener('load', () => {
+    const contenu = localStorage.getItem('texteFeuille');
+    if (contenu) {
+      zoneTexte.value = contenu;
+    }
+  });
+</script>
 
 </body>
 </html>
