@@ -30,8 +30,7 @@
 
     .devinette {
       margin-bottom: 30px;
-      height: 320px;
-      overflow: hidden;
+      min-height: 340px; /* ← hauteur réservée, pas fixe */
     }
 
     .devinette p {
@@ -148,7 +147,6 @@
 
         function typeChar() {
           if (skipRequested) {
-            // Affiche la ligne entière d'un coup
             for (; charIndex < line.length; charIndex++) {
               const span = document.createElement('span');
               span.className = 'letter';
@@ -166,7 +164,7 @@
             span.textContent = line[charIndex];
             p.appendChild(span);
             charIndex++;
-            setTimeout(typeChar, 50);
+            setTimeout(typeChar, 30);
           } else {
             lineIndex++;
             setTimeout(typeLine, 300);
@@ -219,7 +217,7 @@
       skipRequested = true;
     });
 
-    showRiddle();
+    showRiddle(); // lancement initial
   </script>
 </body>
 </html>
