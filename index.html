@@ -33,8 +33,19 @@
       margin: 10px 0;
       font-size: 25px;
       line-height: 1.5;
-      opacity: 1;
       white-space: pre-wrap;
+    }
+
+    .letter {
+      opacity: 0;
+      display: inline-block;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
     input[type="text"] {
@@ -129,7 +140,7 @@
     function showRiddle() {
       const lines = document.querySelectorAll('.devinette p');
 
-      lines.forEach(line => line.innerText = '');
+      lines.forEach(line => line.innerHTML = '');
 
       let currentLine = 0;
 
@@ -141,7 +152,10 @@
 
         function typeChar() {
           if (charIndex < text.length) {
-            lines[currentLine].innerText += text[charIndex];
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = text[charIndex];
+            lines[currentLine].appendChild(span);
             charIndex++;
             setTimeout(typeChar, 30);
           } else {
