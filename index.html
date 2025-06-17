@@ -30,7 +30,8 @@
 
     .devinette {
       margin-bottom: 30px;
-      min-height: 300px; /* ← évite les sauts pendant la frappe */
+      height: 320px;
+      overflow: hidden;
     }
 
     .devinette p {
@@ -59,7 +60,7 @@
       border-radius: 8px;
       margin-top: 15px;
       width: 60%;
-      min-width: 300px; /* ← largeur fixe minimum */
+      min-width: 300px;
       max-width: 400px;
     }
 
@@ -165,7 +166,7 @@
             span.textContent = line[charIndex];
             p.appendChild(span);
             charIndex++;
-            setTimeout(typeChar, 40);
+            setTimeout(typeChar, 50);
           } else {
             lineIndex++;
             setTimeout(typeLine, 300);
@@ -210,7 +211,6 @@
       showRiddle();
     });
 
-    // Skip animation si clic en dehors du champ/bouton
     document.addEventListener('click', function (e) {
       const target = e.target;
       const isInput = target.tagName === 'INPUT';
@@ -219,7 +219,7 @@
       skipRequested = true;
     });
 
-    showRiddle(); // Lancement initial
+    showRiddle();
   </script>
 </body>
 </html>
