@@ -94,15 +94,14 @@
     ];
 function checkPassword() {
   var input = document.getElementById('password');
-  var pass = input.value.trim();
+  var pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
   var error = document.getElementById('errorMsg');
   if (pass === '') {
     error.innerText = '';
     error.style.display = 'none';
     return;
   }
-var pass = input.value.trim().toLowerCase();
-const validPasswords = ['union', 'lunion'];
+const validPasswords = ['union', "l'union"];
 if (validPasswords.includes(pass)) {
     window.location.href = 'livre.html';
   } else {
