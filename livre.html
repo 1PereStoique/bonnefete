@@ -13,12 +13,12 @@
       width: 100%;
       overflow: hidden;
       font-family: 'Georgia', serif;
-    }
-
-    body {
       background: url('2.jpg') no-repeat center center fixed;
       background-size: cover;
-      position: relative;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     .feuille {
@@ -147,6 +147,7 @@
       feuille.style.display = 'none';
       fermer.style.display = 'none';
       feuilleVisible = false;
+      message.classList.remove('hidden'); // Réafficher le message
     });
 
     // Fermer avec la touche Échap
@@ -155,6 +156,7 @@
         feuille.style.display = 'none';
         fermer.style.display = 'none';
         feuilleVisible = false;
+        message.classList.remove('hidden'); // Réafficher le message
       }
     });
 
