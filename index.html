@@ -6,6 +6,10 @@
   <meta charset="UTF-8">
   <title>Racines</title>
   <style>
+    .devinette p {
+      opacity: 0;
+      transition: opacity 0.4s ease-in;
+    }
     html, body {
       height: 100%;
       margin: 0;
@@ -80,7 +84,6 @@
   <div class="error" id="errorMsg"></div>
 </form>
   </div>
-
   <script>
     const messages = [
       "Tu t’es trompé, Yves.",
@@ -101,7 +104,7 @@ function checkPassword() {
     error.style.display = 'none';
     return;
   }
-const validPasswords = ['union', "l'union"];
+const validPasswords = ['union', "l'union", 'lunion'];
 if (validPasswords.includes(pass)) {
     window.location.href = 'livre.html';
   } else {
@@ -121,6 +124,19 @@ window.addEventListener('pageshow', function () {
     error.style.display = 'none';
   }
 });
+  function showRiddle() {
+    const lines = document.querySelectorAll('.devinette p');
+    lines.forEach(line => line.style.opacity = 0);
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < lines.length) {
+        lines[i].style.opacity = 1;
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 300);
+  }
   </script>
 </body>
 </html>
