@@ -101,7 +101,8 @@ function checkPassword() {
     error.style.display = 'none';
     return;
   }
-  if (pass === 'union') {
+const validPasswords = ['union', 'Union', 'l''union', 'L''union', 'L''Union'];
+if (validPasswords.includes(pass)) {
     window.location.href = 'livre.html';
   } else {
     const random = Math.floor(Math.random() * messages.length);
