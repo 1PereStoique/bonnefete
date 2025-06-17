@@ -101,7 +101,8 @@ function checkPassword() {
     error.style.display = 'none';
     return;
   }
-const validPasswords = ['union', 'Union', 'l''union', 'L''union', 'L''Union'];
+var pass = input.value.trim().toLowerCase();
+const validPasswords = ['union', 'lunion'];
 if (validPasswords.includes(pass)) {
     window.location.href = 'livre.html';
   } else {
