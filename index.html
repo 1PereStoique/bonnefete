@@ -10,6 +10,7 @@
       margin: 0;
       font-family: Arial, sans-serif;
     }
+
     body {
       background-image: url('1.jpeg');
       background-size: cover;
@@ -18,6 +19,7 @@
       justify-content: center;
       align-items: center;
     }
+
     .box {
       background-color: rgba(0, 0, 0, 0.7);
       padding: 50px;
@@ -26,12 +28,15 @@
       color: white;
       max-width: 800px;
     }
+
     .devinette p {
       margin: 10px 0;
       font-size: 25px;
       line-height: 1.5;
       opacity: 1;
+      white-space: pre-wrap;
     }
+
     input[type="text"] {
       padding: 12px;
       font-size: 18px;
@@ -40,6 +45,7 @@
       margin-top: 15px;
       width: 60%;
     }
+
     button {
       padding: 12px 25px;
       font-size: 20px;
@@ -50,9 +56,11 @@
       color: white;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #45a049;
     }
+
     .error {
       color: #ff7070;
       margin-top: 15px;
@@ -65,14 +73,15 @@
 <body>
   <div class="box">
     <div class="devinette">
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
+      <p data-text="Je suis le lien invisible,"></p>
+      <p data-text="Qui unit sans chaînes,"></p>
+      <p data-text="Je suis plus fort que le sang,"></p>
+      <p data-text="Car je rassemble même les cœurs lointains."></p>
+      <p data-text="Dans la différence je trouve ma force,"></p>
+      <p data-text="Dans l’entraide je prends sens,"></p>
+      <p data-text="Je fais d’un “je” un “nous”."></p>
     </div>
+
     <form onsubmit="checkPassword(); return false;">
       <input type="text" id="password" placeholder="Qui suis-je ?" />
       <br />
@@ -80,6 +89,7 @@
       <div class="error" id="errorMsg"></div>
     </form>
   </div>
+
   <script>
     const messages = [
       "Tu t’es trompé, Yves.",
@@ -91,16 +101,20 @@
       "Sinon t'es fier de tes mains ?",
       "Indice : c'est pas la bonne réponse."
     ];
+
     function checkPassword() {
       const input = document.getElementById('password');
       const error = document.getElementById('errorMsg');
       const pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
+
+      const validPasswords = ['union', "l'union", 'lunion'];
+
       if (pass === '') {
         error.innerText = '';
         error.style.display = 'none';
         return;
       }
-      const validPasswords = ['union', "l'union", 'lunion'];
+
       if (validPasswords.includes(pass)) {
         window.location.href = 'livre.html';
       } else {
@@ -111,37 +125,37 @@
         input.focus();
       }
     }
+
     function showRiddle() {
       const lines = document.querySelectorAll('.devinette p');
-      const texts = [
-        "Je suis le lien invisible,",
-        "Qui unit sans chaînes,",
-        "Je suis plus fort que le sang,",
-        "Car je rassemble même les cœurs lointains.",
-        "Dans la différence je trouve ma force,",
-        "Dans l’entraide je prends sens,",
-        "Je fais d’un “je” un “nous”."
-      ];
+
       lines.forEach(line => line.innerText = '');
+
       let currentLine = 0;
+
       function typeLine() {
-        if (currentLine >= texts.length) return;
+        if (currentLine >= lines.length) return;
+
+        const text = lines[currentLine].dataset.text;
         let charIndex = 0;
-        const currentText = texts[currentLine];
+
         function typeChar() {
-          if (charIndex < currentText.length) {
-            lines[currentLine].innerText += currentText[charIndex];
+          if (charIndex < text.length) {
+            lines[currentLine].innerText += text[charIndex];
             charIndex++;
-            setTimeout(typeChar, 30); // vitesse de frappe (lettre)
+            setTimeout(typeChar, 30);
           } else {
             currentLine++;
-            setTimeout(typeLine, 300); // délai entre chaque ligne
+            setTimeout(typeLine, 300);
           }
         }
+
         typeChar();
       }
+
       typeLine();
     }
+
     window.addEventListener('pageshow', function () {
       const input = document.getElementById('password');
       const error = document.getElementById('errorMsg');
@@ -152,6 +166,7 @@
       }
       showRiddle();
     });
+
     showRiddle();
   </script>
 </body>
