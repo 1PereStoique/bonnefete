@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Réçit d'une vie</title>
+  <title>Récit d'une vie</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  font-family: 'Georgia', serif;
-  background: url('2.jpg') no-repeat center center fixed;
-  background-size: cover;
-  position: relative;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+    }
+
+    body {
+      background: url('2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
     .feuille {
       position: absolute;
       top: 50%;
@@ -65,62 +69,108 @@ body, html {
     .fermer:hover {
       background: rgba(0, 0, 0, 0.1);
     }
+
+    .message {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 5;
+      max-width: 300px;
+      text-align: center;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .message:hover {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .message.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media screen and (max-width: 600px) {
+      .message {
+        bottom: 20px;
+        right: 20px;
+        font-size: 16px;
+        padding: 10px 14px;
+      }
+
+      .feuille {
+        width: 90%;
+        height: 70%;
+      }
+    }
   </style>
 </head>
 <body>
 
-<div class="fermer" id="fermer">✕</div>
+  <div class="fermer" id="fermer">✕</div>
 
-<div class="feuille" id="feuille">
-  <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
-</div>
+  <div class="feuille" id="feuille">
+    <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
+  </div>
 
-<script>
-  const feuille = document.getElementById('feuille');
-  const zoneTexte = document.getElementById('zoneTexte');
-  const fermer = document.getElementById('fermer');
-  let feuilleVisible = false;
+  <div class="message" id="message">Clique ici pour écrire ton histoire</div>
 
-  // Afficher la feuille au clic
-  document.body.addEventListener('click', () => {
-    if (!feuilleVisible) {
-      feuille.style.display = 'block';
-      fermer.style.display = 'block';
-      feuilleVisible = true;
-      zoneTexte.focus();
-    }
-  });
+  <script>
+    const feuille = document.getElementById('feuille');
+    const zoneTexte = document.getElementById('zoneTexte');
+    const fermer = document.getElementById('fermer');
+    const message = document.getElementById('message');
+    let feuilleVisible = false;
 
-  // Fermer la feuille avec la croix
-  fermer.addEventListener('click', (e) => {
-    e.stopPropagation();
-    feuille.style.display = 'none';
-    fermer.style.display = 'none';
-    feuilleVisible = false;
-  });
+    // Afficher la feuille au clic
+    document.body.addEventListener('click', (e) => {
+      const isFeuilleOuverte = feuilleVisible;
+      const isClicSurTexte = e.target.closest('#zoneTexte') || e.target.closest('#fermer');
+      if (!isFeuilleOuverte && !isClicSurTexte) {
+        feuille.style.display = 'block';
+        fermer.style.display = 'block';
+        feuilleVisible = true;
+        zoneTexte.focus();
+        message.classList.add('hidden');
+      }
+    });
 
-  // Fermer avec la touche Échap
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && feuilleVisible) {
+    // Fermer la feuille avec la croix
+    fermer.addEventListener('click', (e) => {
+      e.stopPropagation();
       feuille.style.display = 'none';
       fermer.style.display = 'none';
       feuilleVisible = false;
-    }
-  });
+    });
 
-  // Sauvegarde automatique
-  zoneTexte.addEventListener('input', () => {
-    localStorage.setItem('texteFeuille', zoneTexte.value);
-  });
+    // Fermer avec la touche Échap
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feuilleVisible) {
+        feuille.style.display = 'none';
+        fermer.style.display = 'none';
+        feuilleVisible = false;
+      }
+    });
 
-  // Récupération du texte
-  window.addEventListener('load', () => {
-    const contenu = localStorage.getItem('texteFeuille');
-    if (contenu) {
-      zoneTexte.value = contenu;
-    }
-  });
-</script>
+    // Sauvegarde automatique
+    zoneTexte.addEventListener('input', () => {
+      localStorage.setItem('texteFeuille', zoneTexte.value);
+    });
+
+    // Récupération du texte
+    window.addEventListener('load', () => {
+      const contenu = localStorage.getItem('texteFeuille');
+      if (contenu) {
+        zoneTexte.value = contenu;
+      }
+    });
+  </script>
 
 </body>
 </html>
