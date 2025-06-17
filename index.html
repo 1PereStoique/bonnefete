@@ -1,15 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <meta charset="UTF-8">
   <title>Racines</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
   <style>
-    .devinette p {
-      opacity: 0;
-      transition: opacity 0.4s ease-in;
-    }
     html, body {
       height: 100%;
       margin: 0;
@@ -35,6 +30,7 @@
       margin: 10px 0;
       font-size: 25px;
       line-height: 1.5;
+      opacity: 1;
     }
     input[type="text"] {
       padding: 12px;
@@ -69,20 +65,20 @@
 <body>
   <div class="box">
     <div class="devinette">
-      <p>Je suis le lien invisible,</p>
-      <p>Qui unit sans chaînes,</p>
-      <p>Je suis plus fort que le sang,</p>
-      <p>Car je rassemble même les cœurs lointains.</p>
-      <p>Dans la différence je trouve ma force,</p>
-      <p>Dans l’entraide je prends sens,</p>
-      <p>Je fais d’un “je” un “nous”.</p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
     </div>
-<form onsubmit="checkPassword(); return false;">
-  <input type="text" id="password" placeholder="Qui suis-je ?" />
-  <br />
-  <button type="submit">Valider</button>
-  <div class="error" id="errorMsg"></div>
-</form>
+    <form onsubmit="checkPassword(); return false;">
+      <input type="text" id="password" placeholder="Qui suis-je ?" />
+      <br />
+      <button type="submit">Valider</button>
+      <div class="error" id="errorMsg"></div>
+    </form>
   </div>
   <script>
     const messages = [
@@ -93,52 +89,70 @@
       "T'as essayé 1234 ?",
       "Un fantastique boulet de ca...",
       "Sinon t'es fier de tes mains ?",
-      "Indice : c'est pas la bonne réponse.",
+      "Indice : c'est pas la bonne réponse."
     ];
-function checkPassword() {
-  var input = document.getElementById('password');
-  var pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
-  var error = document.getElementById('errorMsg');
-  if (pass === '') {
-    error.innerText = '';
-    error.style.display = 'none';
-    return;
-  }
-const validPasswords = ['union', "l'union", 'lunion'];
-if (validPasswords.includes(pass)) {
-    window.location.href = 'livre.html';
-  } else {
-    const random = Math.floor(Math.random() * messages.length);
-    error.innerText = messages[random];
-    error.style.display = 'block';
-    input.value = '';
-    input.focus();
-  }
-}
-window.addEventListener('pageshow', function () {
-  const input = document.getElementById('password');
-  const error = document.getElementById('errorMsg');
-  if (input) input.value = '';
-  if (error) {
-    error.innerText = '';
-    error.style.display = 'none';
-  }
-  showRiddle();
-});
-  function showRiddle() {
-    const lines = document.querySelectorAll('.devinette p');
-    lines.forEach(line => line.style.opacity = 0);
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < lines.length) {
-        lines[i].style.opacity = 1;
-        i++;
-      } else {
-        clearInterval(interval);
+    function checkPassword() {
+      const input = document.getElementById('password');
+      const error = document.getElementById('errorMsg');
+      const pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
+      if (pass === '') {
+        error.innerText = '';
+        error.style.display = 'none';
+        return;
       }
-    }, 300);
-  }
-  showRiddle();
+      const validPasswords = ['union', "l'union", 'lunion'];
+      if (validPasswords.includes(pass)) {
+        window.location.href = 'livre.html';
+      } else {
+        const random = Math.floor(Math.random() * messages.length);
+        error.innerText = messages[random];
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+    function showRiddle() {
+      const lines = document.querySelectorAll('.devinette p');
+      const texts = [
+        "Je suis le lien invisible,",
+        "Qui unit sans chaînes,",
+        "Je suis plus fort que le sang,",
+        "Car je rassemble même les cœurs lointains.",
+        "Dans la différence je trouve ma force,",
+        "Dans l’entraide je prends sens,",
+        "Je fais d’un “je” un “nous”."
+      ];
+      lines.forEach(line => line.innerText = '');
+      let currentLine = 0;
+      function typeLine() {
+        if (currentLine >= texts.length) return;
+        let charIndex = 0;
+        const currentText = texts[currentLine];
+        function typeChar() {
+          if (charIndex < currentText.length) {
+            lines[currentLine].innerText += currentText[charIndex];
+            charIndex++;
+            setTimeout(typeChar, 30); // vitesse de frappe (lettre)
+          } else {
+            currentLine++;
+            setTimeout(typeLine, 300); // délai entre chaque ligne
+          }
+        }
+        typeChar();
+      }
+      typeLine();
+    }
+    window.addEventListener('pageshow', function () {
+      const input = document.getElementById('password');
+      const error = document.getElementById('errorMsg');
+      if (input) input.value = '';
+      if (error) {
+        error.innerText = '';
+        error.style.display = 'none';
+      }
+      showRiddle();
+    });
+    showRiddle();
   </script>
 </body>
 </html>
