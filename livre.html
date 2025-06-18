@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,63 +14,12 @@
       width: 100%;
       overflow: hidden;
       font-family: 'Georgia', serif;
-      background: url('2.PNG') no-repeat center center fixed;
+      background: url('2.jpg') no-repeat center center fixed;
       background-size: cover;
     }
 
-    #lockContainer {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      z-index: 10;
-    }
-
-    #lockImage {
-      width: 300px;
-      transition: transform 0.3s ease;
-    }
-
-    .code {
-      display: flex;
-      justify-content: center;
-      margin-top: -60px;
-      gap: 10px;
-    }
-
-    .digit {
-      width: 40px;
-      height: 60px;
-      font-size: 32px;
-      font-weight: bold;
-      text-align: center;
-      line-height: 60px;
-      background: rgba(255,255,255,0.8);
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .digit:active {
-      transform: scale(0.95);
-    }
-
-    #valider {
-      margin-top: 15px;
-      padding: 6px 14px;
-      font-size: 16px;
-      background-color: #c9a86a;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    #valider:hover {
-      background-color: #b58c47;
+    * {
+      box-sizing: border-box;
     }
 
     .feuille {
@@ -79,13 +29,15 @@
       transform: translate(-50%, -50%);
       width: 60%;
       height: 70%;
-      background-image: url('data:image/png;base64,iVBORw0KGgoAAA...'); /* Remplace par image parchemin si besoin */
-      background-size: cover;
+      background: #fdf6e3;
       border-radius: 8px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 70%), 
+                        url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background-blend-mode: multiply;
       padding: 5mm;
       display: none;
-      z-index: 20;
+      z-index: 10;
     }
 
     textarea {
@@ -100,110 +52,128 @@
       color: #2e2e2e;
     }
 
-    #fermer {
-      position: absolute;
+    .fermer {
+      position: fixed;
       top: 10px;
       left: 10px;
-      width: 32px;
-      height: 32px;
-      background: url('fermer-cadenas.png') no-repeat center center;
-      background-size: contain;
+      font-size: 20px;
+      font-weight: bold;
+      color: #000;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 4px 10px;
+      border-radius: 5px;
       cursor: pointer;
-      z-index: 30;
+      z-index: 20;
+      display: none;
     }
 
-    .fade-out {
-      animation: fadeOut 1s forwards;
+    .fermer:hover {
+      background: rgba(0, 0, 0, 0.1);
     }
 
-    @keyframes fadeOut {
-      to { opacity: 0; transform: scale(1.2); }
+    .message {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 5;
+      max-width: 300px;
+      text-align: center;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
     }
 
-    .shake {
-      animation: shake 0.4s;
+    .message:hover {
+      background: rgba(255, 255, 255, 0.9);
     }
 
-    @keyframes shake {
-      0% { transform: translate(-50%, -50%) translateY(0); }
-      25% { transform: translate(-50%, -50%) translateY(-20px); }
-      50% { transform: translate(-50%, -50%) translateY(5px); }
-      100% { transform: translate(-50%, -50%) translateY(0); }
+    .message.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media screen and (max-width: 600px) {
+      .message {
+        bottom: 20px;
+        right: 20px;
+        font-size: 16px;
+        padding: 10px 14px;
+      }
+
+      .feuille {
+        width: 90%;
+        height: 70%;
+      }
     }
   </style>
 </head>
 <body>
 
-<div id="lockContainer">
-  <img id="lockImage" src="cadenas.PNG" alt="Cadenas">
-  <div class="code" id="codeContainer">
-    <div class="digit">0</div>
-    <div class="digit">0</div>
-    <div class="digit">0</div>
-    <div class="digit">0</div>
+  <div class="fermer" id="fermer">✕</div>
+
+  <div class="feuille" id="feuille">
+    <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
   </div>
-  <button id="valider">Valider</button>
-</div>
 
-<div class="feuille" id="feuille">
-  <div id="fermer"></div>
-  <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
-</div>
+  <div class="message" id="message">Clique sur le livre pour écrire. </div>
 
-<script>
-  const digits = document.querySelectorAll('.digit');
-  const lockContainer = document.getElementById('lockContainer');
-  const feuille = document.getElementById('feuille');
-  const valider = document.getElementById('valider');
-  const fermer = document.getElementById('fermer');
-  const correctCode = ['0', '0', '0', '0'];
+  <script>
+    const feuille = document.getElementById('feuille');
+    const zoneTexte = document.getElementById('zoneTexte');
+    const fermer = document.getElementById('fermer');
+    const message = document.getElementById('message');
+    let feuilleVisible = false;
 
-  digits.forEach((digit, index) => {
-    digit.addEventListener('click', () => {
-      let val = parseInt(digit.textContent);
-      val = (val + 1) % 10;
-      digit.textContent = val;
-    });
-  });
-
-  valider.addEventListener('click', () => {
-    const input = Array.from(digits).map(d => d.textContent);
-    if (JSON.stringify(input) === JSON.stringify(correctCode)) {
-      lockContainer.classList.add('fade-out');
-      setTimeout(() => {
-        lockContainer.style.display = 'none';
+    // Afficher la feuille au clic
+    document.body.addEventListener('click', (e) => {
+      const isFeuilleOuverte = feuilleVisible;
+      const isClicSurTexte = e.target.closest('#zoneTexte') || e.target.closest('#fermer');
+      if (!isFeuilleOuverte && !isClicSurTexte) {
         feuille.style.display = 'block';
-      }, 1000);
-    } else {
-      lockContainer.classList.add('shake');
-      setTimeout(() => {
-        lockContainer.classList.remove('shake');
-        resetCode();
-      }, 500);
-    }
-  });
+        fermer.style.display = 'block';
+        feuilleVisible = true;
+        zoneTexte.focus();
+        message.classList.add('hidden');
+      }
+    });
 
-  function resetCode() {
-    digits.forEach(d => d.textContent = '0');
-  }
+    // Fermer la feuille avec la croix
+    fermer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      feuille.style.display = 'none';
+      fermer.style.display = 'none';
+      feuilleVisible = false;
+      message.classList.remove('hidden'); // Réafficher le message
+    });
 
-  fermer.addEventListener('click', () => {
-    feuille.style.display = 'none';
-    lockContainer.style.display = 'block';
-  });
+    // Fermer avec la touche Échap
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feuilleVisible) {
+        feuille.style.display = 'none';
+        fermer.style.display = 'none';
+        feuilleVisible = false;
+        message.classList.remove('hidden'); // Réafficher le message
+      }
+    });
 
-  const zoneTexte = document.getElementById('zoneTexte');
-  zoneTexte.addEventListener('input', () => {
-    localStorage.setItem('texteFeuille', zoneTexte.value);
-  });
+    // Sauvegarde automatique
+    zoneTexte.addEventListener('input', () => {
+      localStorage.setItem('texteFeuille', zoneTexte.value);
+    });
 
-  window.addEventListener('load', () => {
-    const contenu = localStorage.getItem('texteFeuille');
-    if (contenu) {
-      zoneTexte.value = contenu;
-    }
-  });
-</script>
+    // Récupération du texte
+    window.addEventListener('load', () => {
+      const contenu = localStorage.getItem('texteFeuille');
+      if (contenu) {
+        zoneTexte.value = contenu;
+      }
+    });
+  </script>
 
 </body>
 </html>
