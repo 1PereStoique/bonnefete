@@ -19,6 +19,13 @@
     * {
       box-sizing: border-box;
     }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.1); /* léger fondu */
+      z-index: 0;
+    }
     .feuille {
       position: absolute;
       top: 50%;
@@ -93,10 +100,24 @@
         right: 20px;
         font-size: 16px;
         padding: 10px 14px;
+        max-width: 90%;
       }
       .feuille {
         width: 90%;
-        height: 70%;
+        height: 65%;
+      }
+      textarea {
+        font-size: 1rem;
+      }
+    }
+    @media screen and (max-width: 400px) {
+      .feuille {
+        width: 95%;
+        height: 60%;
+      }
+      .message {
+        font-size: 14px;
+        padding: 8px 10px;
       }
     }
   </style>
@@ -129,14 +150,14 @@
       feuille.style.display = 'none';
       fermer.style.display = 'none';
       feuilleVisible = false;
-      message.classList.remove('hidden'); // Réafficher le message
+      message.classList.remove('hidden');
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && feuilleVisible) {
         feuille.style.display = 'none';
         fermer.style.display = 'none';
         feuilleVisible = false;
-        message.classList.remove('hidden'); // Réafficher le message
+        message.classList.remove('hidden');
       }
     });
     zoneTexte.addEventListener('input', () => {
