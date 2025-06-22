@@ -13,6 +13,7 @@
       width: 100%;
       overflow: hidden;
       font-family: 'Georgia', serif;
+      background: url('livre-mobile.jpeg') no-repeat center center fixed;
       background: url('livre.jpeg') no-repeat center center fixed;
       background-size: cover;
     }
@@ -23,7 +24,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.1); /* léger fondu */
+      background: rgba(0,0,0,0.1);
       z-index: 0;
     }
     .feuille {
@@ -118,6 +119,13 @@
       .message {
         font-size: 14px;
         padding: 8px 10px;
+      }
+    }
+    @media screen and (max-width: 600px) {
+      html, body {
+        background-image: url('livre-mobile.jpeg');
+        background-size: cover;
+        background-position: center;
       }
     }
   </style>
