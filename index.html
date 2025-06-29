@@ -94,6 +94,32 @@
       opacity: 0;
       pointer-events: none;
     }
+    #zoneMdp {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      text-align: center;
+    }
+    #validerMdp {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #validerMdp:hover {
+      background-color: #218838;
+    }
     @media screen and (max-width: 600px) {
       html, body {
         background-image: url('livre-mobile.jpeg');
@@ -135,13 +161,11 @@
     <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
   </div>
   <div class="message" id="message">Clique n'importe où pour ouvrir le mémoire.</div>
-  <div id="zoneMdp" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: rgba(255,255,255,0.95); padding: 20px; border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3); z-index: 1000;">
+  <div id="zoneMdp">
     <div style="margin-bottom: 10px; font-size: 18px;">Mot de passe requis :</div>
     <input type="password" id="champMdp" style="width: 100%; padding: 8px; font-size: 16px;" />
     <div id="erreurMdp" style="color: red; font-size: 14px; margin-top: 8px;"></div>
-    <button id="validerMdp" style="margin-top: 10px; padding: 8px 16px; font-size: 16px;">Valider</button>
+    <button id="validerMdp">Valider</button>
   </div>
   <script>
     const feuille = document.getElementById('feuille');
@@ -155,38 +179,49 @@
     let feuilleVisible = false;
     let motDePasseValide = false;
     const motDePasseCorrect = "gottlieb";
+    function afficherZoneTexte() {
+      feuille.style.display = 'block';
+      fermer.style.display = 'block';
+      feuilleVisible = true;
+      zoneTexte.focus();
+      message.classList.add('hidden');
+    }
+    function afficherMotDePasse() {
+      zoneMdp.style.display = 'block';
+      champMdp.focus();
+    }
+    function cacherZoneTexte() {
+      feuille.style.display = 'none';
+      fermer.style.display = 'none';
+      feuilleVisible = false;
+      message.classList.remove('hidden');
+    }
     document.body.addEventListener('click', (e) => {
-      if (!feuilleVisible && !motDePasseValide) {
-        zoneMdp.style.display = 'block';
-        champMdp.focus();
+      if (!feuilleVisible && !motDePasseValide && zoneMdp.style.display === 'none') {
+        afficherMotDePasse();
       }
     });
     validerMdp.addEventListener('click', () => {
       if (champMdp.value === motDePasseCorrect) {
         motDePasseValide = true;
         zoneMdp.style.display = 'none';
-        feuille.style.display = 'block';
-        fermer.style.display = 'block';
-        feuilleVisible = true;
-        zoneTexte.focus();
-        message.classList.add('hidden');
+        afficherZoneTexte();
       } else {
         erreurMdp.textContent = "Mot de passe incorrect.";
       }
     });
+    champMdp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        validerMdp.click();
+      }
+    });
     fermer.addEventListener('click', (e) => {
       e.stopPropagation();
-      feuille.style.display = 'none';
-      fermer.style.display = 'none';
-      feuilleVisible = false;
-      message.classList.remove('hidden');
+      cacherZoneTexte();
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && feuilleVisible) {
-        feuille.style.display = 'none';
-        fermer.style.display = 'none';
-        feuilleVisible = false;
-        message.classList.remove('hidden');
+        cacherZoneTexte();
       }
     });
     const firebaseConfig = {
@@ -201,6 +236,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const texteRef = db.ref('texteMemoire');
+
     texteRef.on('value', (snapshot) => {
       const data = snapshot.val();
       if (data !== null && data !== zoneTexte.value) {
