@@ -178,7 +178,7 @@
     const erreurMdp = document.getElementById('erreurMdp');
     let feuilleVisible = false;
     let motDePasseValide = false;
-    const motDePasseCorrect = "gottlieb";
+    const motDePasseCorrect = "1234"; // 🔐 à modifier ici
     function afficherZoneTexte() {
       feuille.style.display = 'block';
       fermer.style.display = 'block';
@@ -196,8 +196,8 @@
       feuilleVisible = false;
       message.classList.remove('hidden');
     }
-    document.body.addEventListener('click', (e) => {
-      if (!feuilleVisible && !motDePasseValide && zoneMdp.style.display === 'none') {
+    document.body.addEventListener('click', () => {
+      if (!feuilleVisible && !motDePasseValide) {
         afficherMotDePasse();
       }
     });
@@ -206,6 +206,7 @@
         motDePasseValide = true;
         zoneMdp.style.display = 'none';
         afficherZoneTexte();
+        erreurMdp.textContent = "";
       } else {
         erreurMdp.textContent = "Mot de passe incorrect.";
       }
@@ -236,7 +237,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const texteRef = db.ref('texteMemoire');
-
     texteRef.on('value', (snapshot) => {
       const data = snapshot.val();
       if (data !== null && data !== zoneTexte.value) {
