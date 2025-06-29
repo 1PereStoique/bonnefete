@@ -218,10 +218,12 @@
     });
     fermer.addEventListener('click', (e) => {
       e.stopPropagation();
+      motDePasseValide = false;
       cacherZoneTexte();
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && feuilleVisible) {
+        motDePasseValide = false;
         cacherZoneTexte();
       }
     });
