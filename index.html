@@ -13,7 +13,6 @@
       width: 100%;
       overflow: hidden;
       font-family: 'Georgia', serif;
-      background: url('livre-mobile.jpeg') no-repeat center center fixed;
       background: url('livre.jpeg') no-repeat center center fixed;
       background-size: cover;
     }
@@ -96,6 +95,11 @@
       pointer-events: none;
     }
     @media screen and (max-width: 600px) {
+      html, body {
+        background-image: url('livre-mobile.jpeg');
+        background-size: cover;
+        background-position: center;
+      }
       .message {
         bottom: 20px;
         right: 20px;
@@ -121,14 +125,9 @@
         padding: 8px 10px;
       }
     }
-    @media screen and (max-width: 600px) {
-      html, body {
-        background-image: url('livre-mobile.jpeg');
-        background-size: cover;
-        background-position: center;
-      }
-    }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="fermer" id="fermer">✕</div>
@@ -136,21 +135,43 @@
     <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
   </div>
   <div class="message" id="message">Clique n'importe où pour ouvrir le mémoire.</div>
+  <div id="zoneMdp" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95); padding: 20px; border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3); z-index: 1000;">
+    <div style="margin-bottom: 10px; font-size: 18px;">Mot de passe requis :</div>
+    <input type="password" id="champMdp" style="width: 100%; padding: 8px; font-size: 16px;" />
+    <div id="erreurMdp" style="color: red; font-size: 14px; margin-top: 8px;"></div>
+    <button id="validerMdp" style="margin-top: 10px; padding: 8px 16px; font-size: 16px;">Valider</button>
+  </div>
   <script>
     const feuille = document.getElementById('feuille');
     const zoneTexte = document.getElementById('zoneTexte');
     const fermer = document.getElementById('fermer');
     const message = document.getElementById('message');
+    const zoneMdp = document.getElementById('zoneMdp');
+    const champMdp = document.getElementById('champMdp');
+    const validerMdp = document.getElementById('validerMdp');
+    const erreurMdp = document.getElementById('erreurMdp');
     let feuilleVisible = false;
+    let motDePasseValide = false;
+    const motDePasseCorrect = "gottlieb";
     document.body.addEventListener('click', (e) => {
-      const isFeuilleOuverte = feuilleVisible;
-      const isClicSurTexte = e.target.closest('#zoneTexte') || e.target.closest('#fermer');
-      if (!isFeuilleOuverte && !isClicSurTexte) {
+      if (!feuilleVisible && !motDePasseValide) {
+        zoneMdp.style.display = 'block';
+        champMdp.focus();
+      }
+    });
+    validerMdp.addEventListener('click', () => {
+      if (champMdp.value === motDePasseCorrect) {
+        motDePasseValide = true;
+        zoneMdp.style.display = 'none';
         feuille.style.display = 'block';
         fermer.style.display = 'block';
         feuilleVisible = true;
         zoneTexte.focus();
         message.classList.add('hidden');
+      } else {
+        erreurMdp.textContent = "Mot de passe incorrect.";
       }
     });
     fermer.addEventListener('click', (e) => {
@@ -168,14 +189,26 @@
         message.classList.remove('hidden');
       }
     });
-    zoneTexte.addEventListener('input', () => {
-      localStorage.setItem('texteFeuille', zoneTexte.value);
-    });
-    window.addEventListener('load', () => {
-      const contenu = localStorage.getItem('texteFeuille');
-      if (contenu) {
-        zoneTexte.value = contenu;
+    const firebaseConfig = {
+      apiKey: "AIzaSyB71TAbKAcJ-tqc3tUd5ndqG__hZX510T4",
+      authDomain: "memoire-partagee.firebaseapp.com",
+      databaseURL: "https://memoire-partagee-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "memoire-partagee",
+      storageBucket: "memoire-partagee.appspot.com",
+      messagingSenderId: "636389110935",
+      appId: "1:636389110935:web:e85c5d5d26753f9ee065d2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const texteRef = db.ref('texteMemoire');
+    texteRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data !== null && data !== zoneTexte.value) {
+        zoneTexte.value = data;
       }
+    });
+    zoneTexte.addEventListener('input', () => {
+      texteRef.set(zoneTexte.value);
     });
   </script>
 </body>
