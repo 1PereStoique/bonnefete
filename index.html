@@ -2,192 +2,181 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Racines</title>
+  <title>Récit d'une vie</title>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
-      height: 100%;
       margin: 0;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      background: url('livre-mobile.jpeg') no-repeat center center fixed;
+      background: url('livre.jpeg') no-repeat center center fixed;
+      background-size: cover;
     }
-    body {
-      background: url('papa.jpeg') center/cover no-repeat;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    * {
+      box-sizing: border-box;
     }
-    .box {
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 50px;
-      border-radius: 20px;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.1);
+      z-index: 0;
+    }
+    .feuille {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      height: 70%;
+      background: #fdf6e3;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 70%), 
+                        url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background-blend-mode: multiply;
+      padding: 5mm;
+      display: none;
+      z-index: 10;
+    }
+    textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+      border: none;
+      background: transparent;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      outline: none;
+      color: #2e2e2e;
+    }
+    .fermer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #000;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 20;
+      display: none;
+    }
+    .fermer:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .message {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 5;
+      max-width: 300px;
       text-align: center;
-      color: white;
-      max-width: 800px;
-      width: 90%;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
     }
-    .devinette {
-      margin-bottom: 30px;
-      min-height: 340px; /* ← hauteur réservée, pas fixe */
+    .message:hover {
+      background: rgba(255, 255, 255, 0.9);
     }
-    .devinette p {
-      font-size: 25px;
-      margin: 10px 0;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-    .letter {
+    .message.hidden {
       opacity: 0;
-      display: inline-block;
-      animation: fadeIn 0.3s forwards;
+      pointer-events: none;
     }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
+    @media screen and (max-width: 600px) {
+      .message {
+        bottom: 20px;
+        right: 20px;
+        font-size: 16px;
+        padding: 10px 14px;
+        max-width: 90%;
+      }
+      .feuille {
+        width: 90%;
+        height: 65%;
+      }
+      textarea {
+        font-size: 1rem;
       }
     }
-    input[type="text"] {
-      padding: 12px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 15px;
-      width: 60%;
-      min-width: 300px;
-      max-width: 400px;
+    @media screen and (max-width: 400px) {
+      .feuille {
+        width: 95%;
+        height: 60%;
+      }
+      .message {
+        font-size: 14px;
+        padding: 8px 10px;
+      }
     }
-    button {
-      padding: 12px 25px;
-      font-size: 20px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 8px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .error {
-      color: #ff7070;
-      margin-top: 15px;
-      font-size: 20px;
-      display: none;
-      font-style: italic;
+    @media screen and (max-width: 600px) {
+      html, body {
+        background-image: url('livre-mobile.jpeg');
+        background-size: cover;
+        background-position: center;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <div class="devinette" id="devinette"></div>
-    <form onsubmit="checkPassword(); return false;">
-      <input type="text" id="password" placeholder="Qui suis-je ?" />
-      <br />
-      <button type="submit">Valider</button>
-      <div class="error" id="errorMsg"></div>
-    </form>
+  <div class="fermer" id="fermer">✕</div>
+  <div class="feuille" id="feuille">
+    <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
   </div>
+  <div class="message" id="message">Clique sur la plume pour écrire.</div>
   <script>
-    const riddleLines = [
-      "Je suis le lien invisible,",
-      "Qui unit sans chaînes,",
-      "Je suis plus fort que le sang,",
-      "Car je rassemble même les cœurs lointains.",
-      "Dans la différence je trouve ma force,",
-      "Dans l’entraide je prends sens,",
-      "Je fais d’un “je” un “nous”."
-    ];
-    const messages = [
-      "Tu t’es trompé, Yves.",
-      "Tu confonds.",
-      "... fait la force.",
-      "Là tu le fais exprès.",
-      "T'as essayé 1234 ?",
-      "Un fantastique boulet de ca...",
-      "Sinon t'es fier de tes mains ?",
-      "Indice : c'est pas la bonne réponse."
-    ];
-    let isTyping = false;
-    let skipRequested = false;
-    function showRiddle() {
-      if (isTyping) return;
-      isTyping = true;
-      skipRequested = false;
-      const container = document.getElementById('devinette');
-      container.innerHTML = '';
-      let lineIndex = 0;
-      function typeLine() {
-        if (lineIndex >= riddleLines.length) {
-          isTyping = false;
-          return;
-        }
-        const p = document.createElement('p');
-        container.appendChild(p);
-        const line = riddleLines[lineIndex];
-        let charIndex = 0;
-        function typeChar() {
-          if (skipRequested) {
-            for (; charIndex < line.length; charIndex++) {
-              const span = document.createElement('span');
-              span.className = 'letter';
-              span.textContent = line[charIndex];
-              p.appendChild(span);
-            }
-            lineIndex++;
-            setTimeout(typeLine, 0);
-            return;
-          }
-          if (charIndex < line.length) {
-            const span = document.createElement('span');
-            span.className = 'letter';
-            span.textContent = line[charIndex];
-            p.appendChild(span);
-            charIndex++;
-            setTimeout(typeChar, 50);
-          } else {
-            lineIndex++;
-            setTimeout(typeLine, 300);
-          }
-        }
-        typeChar();
+    const feuille = document.getElementById('feuille');
+    const zoneTexte = document.getElementById('zoneTexte');
+    const fermer = document.getElementById('fermer');
+    const message = document.getElementById('message');
+    let feuilleVisible = false;
+    document.body.addEventListener('click', (e) => {
+      const isFeuilleOuverte = feuilleVisible;
+      const isClicSurTexte = e.target.closest('#zoneTexte') || e.target.closest('#fermer');
+      if (!isFeuilleOuverte && !isClicSurTexte) {
+        feuille.style.display = 'block';
+        fermer.style.display = 'block';
+        feuilleVisible = true;
+        zoneTexte.focus();
+        message.classList.add('hidden');
       }
-      typeLine();
-    }
-    function checkPassword() {
-      const input = document.getElementById('password');
-      const error = document.getElementById('errorMsg');
-      const pass = input.value.trim().toLowerCase().replace(/[’']/g, "'");
-      const validPasswords = ['union', "l'union", 'lunion'];
-      if (pass === '') {
-        error.innerText = '';
-        error.style.display = 'none';
-        return;
-      }
-      if (validPasswords.includes(pass)) {
-        window.location.href = 'livre.html';
-      } else {
-        const random = Math.floor(Math.random() * messages.length);
-        error.innerText = messages[random];
-        error.style.display = 'block';
-        input.value = '';
-        input.focus();
-      }
-    }
-    window.addEventListener('pageshow', () => {
-      document.getElementById('password').value = '';
-      const error = document.getElementById('errorMsg');
-      error.innerText = '';
-      error.style.display = 'none';
-      showRiddle();
     });
-    document.addEventListener('click', function (e) {
-      const target = e.target;
-      const isInput = target.tagName === 'INPUT';
-      const isButton = target.tagName === 'BUTTON';
-      if (!isTyping || isInput || isButton) return;
-      skipRequested = true;
+    fermer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      feuille.style.display = 'none';
+      fermer.style.display = 'none';
+      feuilleVisible = false;
+      message.classList.remove('hidden');
     });
-    showRiddle();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feuilleVisible) {
+        feuille.style.display = 'none';
+        fermer.style.display = 'none';
+        feuilleVisible = false;
+        message.classList.remove('hidden');
+      }
+    });
+    zoneTexte.addEventListener('input', () => {
+      localStorage.setItem('texteFeuille', zoneTexte.value);
+    });
+    window.addEventListener('load', () => {
+      const contenu = localStorage.getItem('texteFeuille');
+      if (contenu) {
+        zoneTexte.value = contenu;
+      }
+    });
   </script>
 </body>
 </html>
