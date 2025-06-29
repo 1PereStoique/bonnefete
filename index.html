@@ -214,6 +214,7 @@
     });
     champMdp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         validerMdp.click();
       }
     });
