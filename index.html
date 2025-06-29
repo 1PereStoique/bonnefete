@@ -188,7 +188,6 @@
     }
     function afficherMotDePasse() {
       champMdp.value = "";
-      erreurMdp.textContent = "";
       zoneMdp.style.display = 'block';
       champMdp.focus();
     }
@@ -204,14 +203,14 @@
       }
     });
     validerMdp.addEventListener('click', () => {
-      if (champMdp.value === motDePasseCorrect) {
-        motDePasseValide = true;
-        zoneMdp.style.display = 'none';
-        afficherZoneTexte();
-        erreurMdp.textContent = "";
-      } else {
-        erreurMdp.textContent = "Mot de passe incorrect.";
-      }
+    if (champMdp.value === motDePasseCorrect) {
+      motDePasseValide = true;
+      zoneMdp.style.display = 'none';
+      afficherZoneTexte();
+      erreurMdp.textContent = "";
+    } else {
+      erreurMdp.textContent = "Mot de passe incorrect.";
+    }
     });
     champMdp.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
