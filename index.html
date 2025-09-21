@@ -6,229 +6,62 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      font-family: 'Georgia', serif;
-      background: url('livre.jpeg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.1);
-      z-index: 0;
-    }
-    .feuille {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60%;
-      height: 70%;
-      background: #fdf6e3;
-      border-radius: 8px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-      background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 70%), 
-                        url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-      background-blend-mode: multiply;
-      padding: 5mm;
-      display: none;
-      z-index: 10;
-    }
-    textarea {
-      width: 100%;
-      height: 100%;
-      resize: none;
-      border: none;
-      background: transparent;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      outline: none;
-      color: #2e2e2e;
-    }
-    .fermer {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #000;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 4px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 20;
-      display: none;
-    }
-    .fermer:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-    .message {
-      position: absolute;
-      bottom: 40px;
-      right: 40px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #333;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 18px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      z-index: 5;
-      max-width: 300px;
-      text-align: center;
-      cursor: pointer;
-      transition: opacity 0.3s ease;
-    }
-    .message:hover {
-      background: rgba(255, 255, 255, 0.9);
-    }
-    .message.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    #zoneMdp {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255,255,255,0.95);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      z-index: 1000;
-      text-align: center;
-    }
-    #validerMdp {
-      margin-top: 10px;
-      padding: 8px 16px;
-      font-size: 16px;
-      border: none;
-      background-color: #28a745;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #validerMdp:hover {
-      background-color: #218838;
-    }
-    @media screen and (max-width: 600px) {
-      html, body {
-        background-image: url('livre-mobile.jpeg');
-        background-size: cover;
-        background-position: center;
-      }
-      .message {
-        bottom: 20px;
-        right: 20px;
-        font-size: 16px;
-        padding: 10px 14px;
-        max-width: 90%;
-      }
-      .feuille {
-        width: 90%;
-        height: 65%;
-      }
-      textarea {
-        font-size: 1rem;
-      }
-    }
-    @media screen and (max-width: 400px) {
-      .feuille {
-        width: 95%;
-        height: 60%;
-      }
-      .message {
-        font-size: 14px;
-        padding: 8px 10px;
-      }
-    }
+    html, body { margin:0; padding:0; height:100%; width:100%; overflow:hidden; font-family:'Georgia', serif; background:url('livre.jpeg') no-repeat center center fixed; background-size:cover; }
+    * { box-sizing:border-box; }
+    body::before { content:""; position:fixed; inset:0; background:rgba(0,0,0,.1); z-index:0; }
+    .feuille { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:60%; height:70%; background:#fdf6e3; border-radius:8px; box-shadow:0 0 30px rgba(0,0,0,.5); background-image:radial-gradient(circle at 50% 50%, rgba(255,255,255,.15), transparent 70%), url('https://www.transparenttextures.com/patterns/paper-fibers.png'); background-blend-mode:multiply; padding:5mm; display:none; z-index:10; }
+    textarea { width:100%; height:100%; resize:none; border:none; background:transparent; font-size:1.2rem; line-height:1.6; outline:none; color:#2e2e2e; }
+    .fermer { position:fixed; top:10px; left:10px; font-size:20px; font-weight:bold; color:#000; background:rgba(255,255,255,.7); padding:4px 10px; border-radius:5px; cursor:pointer; z-index:20; display:none; }
+    .fermer:hover { background:rgba(0,0,0,.1); }
+    .message { position:absolute; bottom:40px; right:40px; background:rgba(255,255,255,.8); color:#333; padding:12px 18px; border-radius:10px; font-size:18px; box-shadow:0 0 10px rgba(0,0,0,.3); z-index:5; max-width:300px; text-align:center; cursor:pointer; transition:opacity .3s ease; }
+    .message.hidden { opacity:0; pointer-events:none; }
+    #loginBox { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.95); padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,.3); z-index:1000; text-align:center; width:min(90vw,360px); }
+    #loginBox input { width:100%; padding:8px; font-size:16px; margin-bottom:8px; }
+    #loginBtn { margin-top:6px; padding:8px 16px; font-size:16px; border:none; background:#28a745; color:#fff; border-radius:5px; cursor:pointer; }
+    #loginBtn:hover { background:#218838; }
+    #loginErr { color:red; font-size:14px; min-height:18px; }
+    @media (max-width:600px){ html, body{ background-image:url('livre-mobile.jpeg'); background-size:cover; background-position:center; } .message{ bottom:20px; right:20px; font-size:16px; padding:10px 14px; max-width:90%; } .feuille{ width:90%; height:65%; } textarea{ font-size:1rem; } }
+    @media (max-width:400px){ .feuille{ width:95%; height:60%; } .message{ font-size:14px; padding:8px 10px; } }
   </style>
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="fermer" id="fermer">✕</div>
+
   <div class="feuille" id="feuille">
-    <textarea id="zoneTexte" placeholder="Commence à écrire ici..."></textarea>
+    <textarea id="zoneTexte" placeholder="Commence à écrire ici..." disabled></textarea>
   </div>
-  <div class="message" id="message">Clique n'importe où pour ouvrir le mémoire.</div>
-  <div id="zoneMdp">
-    <div style="margin-bottom: 10px; font-size: 18px;">Mot de passe requis :</div>
-    <input type="password" id="champMdp" style="width: 100%; padding: 8px; font-size: 16px;" />
-    <div id="erreurMdp" style="color: red; font-size: 14px; margin-top: 8px;"></div>
-    <button id="validerMdp">Valider</button>
+
+  <div class="message" id="message">Clique pour ouvrir le mémoire.</div>
+
+  <!-- Login sécurisé -->
+  <div id="loginBox">
+    <div style="margin-bottom:10px; font-size:18px;">Connexion requise</div>
+    <input type="email" id="loginEmail" placeholder="Email" autocomplete="username" />
+    <input type="password" id="loginPass" placeholder="Mot de passe" autocomplete="current-password" />
+    <div id="loginErr"></div>
+    <button id="loginBtn">Se connecter</button>
   </div>
+
   <script>
-    const feuille = document.getElementById('feuille');
+    // UI refs
+    const feuille   = document.getElementById('feuille');
     const zoneTexte = document.getElementById('zoneTexte');
-    const fermer = document.getElementById('fermer');
-    const message = document.getElementById('message');
-    const zoneMdp = document.getElementById('zoneMdp');
-    const champMdp = document.getElementById('champMdp');
-    const validerMdp = document.getElementById('validerMdp');
-    const erreurMdp = document.getElementById('erreurMdp');
+    const fermer    = document.getElementById('fermer');
+    const message   = document.getElementById('message');
+    const loginBox  = document.getElementById('loginBox');
+    const loginEmail= document.getElementById('loginEmail');
+    const loginPass = document.getElementById('loginPass');
+    const loginBtn  = document.getElementById('loginBtn');
+    const loginErr  = document.getElementById('loginErr');
     let feuilleVisible = false;
-    let motDePasseValide = false;
-    const motDePasseCorrect = "gottlieb";
-    function afficherZoneTexte() {
-      feuille.style.display = 'block';
-      fermer.style.display = 'block';
-      feuilleVisible = true;
-      zoneTexte.focus();
-      message.classList.add('hidden');
-    }
-    function afficherMotDePasse() {
-      champMdp.value = "";
-      zoneMdp.style.display = 'block';
-      champMdp.focus();
-    }
-    function cacherZoneTexte() {
-      feuille.style.display = 'none';
-      fermer.style.display = 'none';
-      feuilleVisible = false;
-      message.classList.remove('hidden');
-    }
-    document.body.addEventListener('click', () => {
-      if (!feuilleVisible && !motDePasseValide) {
-        afficherMotDePasse();
-      }
-    });
-    validerMdp.addEventListener('click', () => {
-    if (champMdp.value === motDePasseCorrect) {
-      motDePasseValide = true;
-      zoneMdp.style.display = 'none';
-      afficherZoneTexte();
-      erreurMdp.textContent = "";
-    } else {
-      erreurMdp.textContent = "Mot de passe incorrect.";
-    }
-    });
-    champMdp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        validerMdp.click();
-      }
-    });
-    fermer.addEventListener('click', (e) => {
-      e.stopPropagation();
-      motDePasseValide = false;
-      cacherZoneTexte();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && feuilleVisible) {
-        motDePasseValide = false;
-        cacherZoneTexte();
-      }
-    });
+
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyB71TAbKAcJ-tqc3tUd5ndqG__hZX510T4",
       authDomain: "memoire-partagee.firebaseapp.com",
@@ -238,17 +71,102 @@
       messagingSenderId: "636389110935",
       appId: "1:636389110935:web:e85c5d5d26753f9ee065d2"
     };
+    const OWNER_UID = "P7x1YDpJcMdpDIlVtMUHyCjjt4g1"; // ton UID
+
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const texteRef = db.ref('texteMemoire');
-    texteRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data !== null && data !== zoneTexte.value) {
-        zoneTexte.value = data;
+
+    // App Check (clé reCAPTCHA Enterprise)
+    const appCheck = firebase.appCheck();
+    appCheck.activate("6Lds0NArAAAAAMUt61Aix5NUows5wHjJfR3zIalB", true);
+
+    // Auth + DB
+    const auth = firebase.auth();
+    const db   = firebase.database();
+
+    function afficherZoneTexte() {
+      feuille.style.display = 'block';
+      fermer.style.display = 'block';
+      feuilleVisible = true;
+      message.classList.add('hidden');
+      zoneTexte.focus();
+    }
+    function cacherZoneTexte() {
+      feuille.style.display = 'none';
+      fermer.style.display = 'none';
+      feuilleVisible = false;
+      message.classList.remove('hidden');
+      zoneTexte.blur();
+    }
+
+    document.body.addEventListener('click', () => {
+      if (!feuilleVisible) {
+        if (!auth.currentUser) {
+          loginBox.style.display = 'block';
+          loginEmail.focus();
+        } else {
+          afficherZoneTexte();
+        }
       }
     });
-    zoneTexte.addEventListener('input', () => {
-      texteRef.set(zoneTexte.value);
+
+    loginBtn.addEventListener('click', async () => {
+      loginErr.textContent = '';
+      try {
+        await auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value);
+        loginBox.style.display = 'none';
+      } catch (e) {
+        loginErr.textContent = 'Identifiants invalides';
+      }
+    });
+
+    loginPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
+
+    fermer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cacherZoneTexte();
+      auth.signOut().catch(()=>{});
+    });
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && feuilleVisible) cacherZoneTexte(); });
+
+    // Brancher la DB après Auth + contrôle UID
+    let texteRef = null;
+    function attachDb() {
+      if (texteRef) return;
+      texteRef = db.ref('texteMemoire');
+
+      texteRef.on('value', (snap) => {
+        const data = snap.val();
+        if (typeof data === 'string' && data !== zoneTexte.value) zoneTexte.value = data;
+      });
+
+      let t = 0;
+      zoneTexte.disabled = false;
+      zoneTexte.addEventListener('input', () => {
+        const now = Date.now();
+        if (now - t < 500) return;
+        t = now;
+        const val = zoneTexte.value;
+        if (typeof val === 'string' && val.length <= 20000) texteRef.set(val);
+      });
+    }
+
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        if (texteRef) { texteRef.off(); texteRef = null; }
+        zoneTexte.value = '';
+        zoneTexte.disabled = true;
+        cacherZoneTexte();
+        return;
+      }
+      if (user.uid !== OWNER_UID) {
+        loginErr.textContent = "Accès refusé";
+        loginBox.style.display = 'block';
+        auth.signOut();
+        return;
+      }
+      attachDb();
+      afficherZoneTexte();
     });
   </script>
 </body>
