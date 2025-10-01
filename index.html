@@ -15,20 +15,24 @@
     .fermer:hover { background:rgba(0,0,0,.1); }
     .message { position:absolute; bottom:40px; right:40px; background:rgba(255,255,255,.8); color:#333; padding:12px 18px; border-radius:10px; font-size:18px; box-shadow:0 0 10px rgba(0,0,0,.3); z-index:5; max-width:300px; text-align:center; cursor:pointer; transition:opacity .3s ease; }
     .message.hidden { opacity:0; pointer-events:none; }
-    #loginBox { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.95); padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,.3); z-index:1000; text-align:center; width:min(90vw,360px); }
+    #loginBox { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.95); padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,.3); z-index:1000; text-align:center; width:min(90vw,420px); }
     #loginBox input { width:100%; padding:8px; font-size:16px; margin-bottom:8px; }
-    #loginBtn { margin-top:6px; padding:8px 16px; font-size:16px; border:none; background:#28a745; color:#fff; border-radius:5px; cursor:pointer; }
+    #loginActions { display:flex; gap:8px; justify-content:space-between; align-items:center; margin-top:6px; }
+    #loginBtn { padding:8px 16px; font-size:16px; border:none; background:#28a745; color:#fff; border-radius:5px; cursor:pointer; }
+    #resetBtn { padding:8px 12px; font-size:14px; border:none; background:#007bff; color:#fff; border-radius:5px; cursor:pointer; }
     #loginBtn:hover { background:#218838; }
-    #loginErr { color:red; font-size:14px; min-height:18px; }
+    #resetBtn:hover { background:#0069d9; }
+    #loginErr { color:red; font-size:14px; min-height:18px; margin-top:8px; }
     @media (max-width:600px){ html, body{ background-image:url('livre-mobile.jpeg'); background-size:cover; background-position:center; } .message{ bottom:20px; right:20px; font-size:16px; padding:10px 14px; max-width:90%; } .feuille{ width:90%; height:65%; } textarea{ font-size:1rem; } }
     @media (max-width:400px){ .feuille{ width:95%; height:60%; } .message{ font-size:14px; padding:8px 10px; } }
   </style>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Optionnel: App Check Enterprise si déjà configuré -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script> -->
 </head>
 <body>
   <div class="fermer" id="fermer">✕</div>
@@ -39,17 +43,19 @@
 
   <div class="message" id="message">Clique pour ouvrir le mémoire.</div>
 
-  <!-- Login sécurisé -->
   <div id="loginBox">
     <div style="margin-bottom:10px; font-size:18px;">Connexion requise</div>
     <input type="email" id="loginEmail" placeholder="Email" autocomplete="username" />
     <input type="password" id="loginPass" placeholder="Mot de passe" autocomplete="current-password" />
+    <div id="loginActions">
+      <button id="loginBtn">Se connecter</button>
+      <button id="resetBtn" title="Envoyer un email pour changer le mot de passe">Réinitialiser mot de passe</button>
+    </div>
     <div id="loginErr"></div>
-    <button id="loginBtn">Se connecter</button>
   </div>
 
   <script>
-    // UI refs
+    // Refs UI
     const feuille   = document.getElementById('feuille');
     const zoneTexte = document.getElementById('zoneTexte');
     const fermer    = document.getElementById('fermer');
@@ -58,10 +64,11 @@
     const loginEmail= document.getElementById('loginEmail');
     const loginPass = document.getElementById('loginPass');
     const loginBtn  = document.getElementById('loginBtn');
+    const resetBtn  = document.getElementById('resetBtn');
     const loginErr  = document.getElementById('loginErr');
     let feuilleVisible = false;
 
-    // Firebase config
+    // Firebase config (inchangé)
     const firebaseConfig = {
       apiKey: "AIzaSyB71TAbKAcJ-tqc3tUd5ndqG__hZX510T4",
       authDomain: "memoire-partagee.firebaseapp.com",
@@ -71,15 +78,13 @@
       messagingSenderId: "636389110935",
       appId: "1:636389110935:web:e85c5d5d26753f9ee065d2"
     };
-    const OWNER_UID = "P7x1YDpJcMdpDIlVtMUHyCjjt4g1"; // ton UID
 
     firebase.initializeApp(firebaseConfig);
 
-    // App Check (clé reCAPTCHA Enterprise)
-    const appCheck = firebase.appCheck();
-    appCheck.activate("6Lds0NArAAAAAMUt61Aix5NUows5wHjJfR3zIalB", true);
+    // Optionnel: activer App Check si clé dispo
+    // const appCheck = firebase.appCheck();
+    // appCheck.activate("CLÉ_RECAPTCHA_ENTERPRISE_SITE", true);
 
-    // Auth + DB
     const auth = firebase.auth();
     const db   = firebase.database();
 
@@ -98,7 +103,9 @@
       zoneTexte.blur();
     }
 
-    document.body.addEventListener('click', () => {
+    // ouverture uniquement via la bulle
+    message.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (!feuilleVisible) {
         if (!auth.currentUser) {
           loginBox.style.display = 'block';
@@ -109,16 +116,42 @@
       }
     });
 
+    // ne pas propager les clics dans la box
+    [loginBox, loginEmail, loginPass, loginBtn, resetBtn].forEach(el => {
+      el.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    // Login
     loginBtn.addEventListener('click', async () => {
       loginErr.textContent = '';
+      const email = loginEmail.value.trim();
+      const pass  = loginPass.value;
+      if (!email || !pass) { loginErr.textContent = 'Email et mot de passe requis'; return; }
       try {
-        await auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value);
+        await auth.signInWithEmailAndPassword(email, pass);
         loginBox.style.display = 'none';
       } catch (e) {
         loginErr.textContent = 'Identifiants invalides';
       }
     });
 
+    // Reset password
+    resetBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      loginErr.textContent = '';
+      const email = loginEmail.value.trim();
+      if (!email) { loginErr.textContent = 'Saisis l’email pour recevoir le lien de reset'; return; }
+      try {
+        await auth.sendPasswordResetEmail(email);
+        loginErr.style.color = 'green';
+        loginErr.textContent = 'Email de réinitialisation envoyé';
+        setTimeout(()=>{ loginErr.textContent=''; loginErr.style.color='red'; }, 4000);
+      } catch (err) {
+        loginErr.textContent = 'Erreur envoi email';
+      }
+    });
+
+    // Enter dans mot de passe
     loginPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
 
     fermer.addEventListener('click', (e) => {
@@ -129,7 +162,7 @@
 
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && feuilleVisible) cacherZoneTexte(); });
 
-    // Brancher la DB après Auth + contrôle UID
+    // DB
     let texteRef = null;
     function attachDb() {
       if (texteRef) return;
@@ -151,7 +184,14 @@
       });
     }
 
-    auth.onAuthStateChanged((user) => {
+    // Vérif des droits via custom claims (editor:true)
+    async function userHasEditorClaim(user) {
+      if (!user) return false;
+      const idTokenResult = await user.getIdTokenResult(true);
+      return !!(idTokenResult && idTokenResult.claims && idTokenResult.claims.editor === true);
+    }
+
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
         if (texteRef) { texteRef.off(); texteRef = null; }
         zoneTexte.value = '';
@@ -159,14 +199,20 @@
         cacherZoneTexte();
         return;
       }
-      if (user.uid !== OWNER_UID) {
-        loginErr.textContent = "Accès refusé";
-        loginBox.style.display = 'block';
-        auth.signOut();
-        return;
+      try {
+        const ok = await userHasEditorClaim(user);
+        if (!ok) {
+          loginErr.textContent = "Accès refusé";
+          loginBox.style.display = 'block';
+          await auth.signOut();
+          return;
+        }
+        attachDb();
+        afficherZoneTexte();
+      } catch (err) {
+        loginErr.textContent = "Erreur d'authentification";
+        await auth.signOut();
       }
-      attachDb();
-      afficherZoneTexte();
     });
   </script>
 </body>
